@@ -1,0 +1,7 @@
+{
+  "name": "whitelist",
+  "description": "A typed safe Omegga plugin.",
+  "author": "Syringe",
+  "config": {},
+  "commands": []
+}
