@@ -20,7 +20,7 @@ remove it entirely if it is unnecessary.
 
 ## Install
 
-`omegga install gh:Syringe/omegga-whitelist`
+`omegga install gh:Syringe/whitelist`
 
 _TODO: more steps...?_
 
