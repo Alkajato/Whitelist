@@ -23,7 +23,7 @@ export class Runtime {
             null;
 
         if (unpassworded) {
-            this.enabled = false;
+            Runtime.enabled = false;
 
             const host = this.omegga.getPlayers().find(player => this.omegga.findPlayerByName(player.name).isHost())
             const message = "Unethical use of whitelist, enforce a password to use whitelist."
@@ -34,7 +34,7 @@ export class Runtime {
                 this.omegga.whisper(host.name, message);
             }
         } else {
-            this.enabled = true;
+            Runtime.enabled = true;
         }
     }
 
@@ -68,7 +68,7 @@ export class Runtime {
         });
 
         Runtime.omegga.on("join", async (player: { name: string; id: string; state: string; controller: string }) => {
-            if (!this.enabled)
+            if (!Runtime.enabled)
                 return;
 
             const authorized = await WhitelistManager.validateIncomingUser(player.name, player.id);
