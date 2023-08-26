@@ -31,8 +31,8 @@ export class Runtime {
 
         WhitelistManager.createWhitelistJson();
 
-        Runtime.omegga.on("join", (player: { name: string; id: string; state: string; controller: string }) => {
-            const authorized = WhitelistManager.validateIncomingUser(player.name, player.id);
+        Runtime.omegga.on("join", async (player: { name: string; id: string; state: string; controller: string }) => {
+            const authorized = await WhitelistManager.validateIncomingUser(player.name, player.id);
             this.omegga.broadcast(`Is ${player.name} allowed? ${authorized}.`);
             if (!authorized) {
                 // kick the player, lol!
