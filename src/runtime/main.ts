@@ -44,7 +44,7 @@ export class Runtime {
         this.store = store;
 
         Runtime.enableDisableCheck();
-        setInterval(() => Runtime.enableDisableCheck, 60000);
+        setInterval(() => Runtime.enableDisableCheck(), 60000);
 
         WhitelistManager.createWhitelistJson();
 
