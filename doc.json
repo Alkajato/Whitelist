@@ -1,7 +1,32 @@
 {
-  "name": "whitelist",
-  "description": "A typed safe Omegga plugin.",
-  "author": "Syringe",
-  "config": {},
-  "commands": []
+    "name": "whitelist",
+    "description": "Automatically kicks connecting players if they aren't in the whitelist. For use with passworded servers.",
+    "author": "Syringe, Critical Floof",
+    "config": {},
+    "commands": [
+        {
+            "name": "/whitelist_add",
+            "description": "add a user from the whitelist",
+            "example": "/whitelist_add Syringe, /whitelist_add c370e89e-53e5-43de-a760-b3f95be5c6a6",
+            "args": [
+                {
+                    "name": "username/uuid",
+                    "description": "The name or UUID of the player",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "/whitelist_remove",
+            "description": "removes a user from the whitelist",
+            "example": "/whitelist_remove Syringe /whitelist_remove c370e89e-53e5-43de-a760-b3f95be5c6a6",
+            "args": [
+                {
+                    "name": "username/uuid",
+                    "description": "The name or UUID of the player",
+                    "required": true
+                }
+            ]
+        }
+    ]
 }
