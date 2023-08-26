@@ -7,7 +7,7 @@ A typed safe plugin for [omegga](https://github.com/brickadia-community/omegga).
 
 ## Install
 
-`omegga install gh:Syringe/whitelist`
+`omegga install gh:Alkajato/whitelist`
 
 ## Commands
 
