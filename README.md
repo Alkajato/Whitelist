@@ -1,29 +1,15 @@
-<!--
-
-When uploading your plugin to github/gitlab
-start your repo name with "omegga-"
-
-example: https://github.com/Syringe/omegga-whitelist
-
-Your plugin will be installed via omegga install gh:Syringe/whitelist
-
--->
-
 # whitelist
 
+Adds player whitelist functionality for passworded servers.
+Players attempting to connect will be automatically kicked if they do not satisfy the whitelist.
+
 A typed safe plugin for [omegga](https://github.com/brickadia-community/omegga).
-
-This is an auto-generated README file. Please change it before publishing your plugin!
-
-Be sure to edit the script in `setup.sh` to configure your plugin on install, or
-remove it entirely if it is unnecessary.
 
 ## Install
 
 `omegga install gh:Syringe/whitelist`
 
-_TODO: more steps...?_
+## Commands
 
-## Usage
-
-_TODO: include some usage information_
+-   /Whitelist_add (username or uuid)
+-   /Whitelist_remove (username or uuid)
