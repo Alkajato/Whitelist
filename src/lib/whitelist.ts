@@ -67,14 +67,20 @@ export default class WhitelistManager {
         this.writeWhitelistFile(whitelist);
     }
 
-    public static validateIncomingUser(username: string, uuid: string): boolean {
+    public static async validateIncomingUser(username: string, uuid: string): Promise<boolean> {
         let authorized = false;
 
         let whitelist = this.readWhitelistFile();
+
+        const isHost = await new Promise((res) => {
+            setImmediate(() => {
+                res(Runtime.omegga.getPlayer(username).isHost());
+            });
+        });
+        if (isHost) return true;
+
         for (let i = 0; i < whitelist.players.length; i++) {
             const playerInfo = whitelist.players[i];
-
-            if (Runtime.omegga.getPlayer(username).isHost()) authorized = true;
 
             // exclusion cases
             if (playerInfo.username === username && playerInfo.uuid !== uuid && playerInfo.uuid != undefined) break;
@@ -101,7 +107,7 @@ export default class WhitelistManager {
 
     public static createWhitelistJson() {
         if (!fs.existsSync(this.getWhitelistPath())) {
-            fs.writeFileSync(this.getWhitelistPath(), "");
+            fs.writeFileSync(this.getWhitelistPath(), `{"players":[]}`);
         }
     }
 
