@@ -1,4 +1,1 @@
-[
-    "fs",
-    "readline"
-]
+["fs", "path"]
