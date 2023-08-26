@@ -1,7 +1,7 @@
 {
-  "name": "whitelist",
-  "description": "A typed safe Omegga plugin.",
-  "author": "Syringe",
-  "config": {},
-  "commands": []
+    "name": "whitelist",
+    "description": "Automatically kicks connecting players if they aren't in the whitelist. For use with passworded servers.",
+    "author": "Syringe, Critical Floof",
+    "config": {},
+    "commands": []
 }

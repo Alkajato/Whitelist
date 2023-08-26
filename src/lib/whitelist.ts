@@ -1,6 +1,7 @@
 import path from "path";
 import fs from "fs";
 import { Runtime } from "src/runtime/main";
+import { OmeggaPlayer } from "omegga";
 
 type WhitelistJSON = {
     players: Array<{ username: string; uuid: string }>;
@@ -72,12 +73,20 @@ export default class WhitelistManager {
 
         let whitelist = this.readWhitelistFile();
 
-        const isHost = await new Promise((res) => {
-            setImmediate(() => {
-                res(Runtime.omegga.getPlayer(username).isHost());
+        let player: OmeggaPlayer = undefined;
+        for (let i = 0; i < 10; i++) {
+            await new Promise<void>((res) => {
+                setTimeout(() => {
+                    player = Runtime.omegga.getPlayer(username);
+                    if (player === undefined) {
+                        res();
+                        return;
+                    }
+                    if (player.isHost()) authorized = true;
+                    res();
+                }, 5);
             });
-        });
-        if (isHost) return true;
+        }
 
         for (let i = 0; i < whitelist.players.length; i++) {
             const playerInfo = whitelist.players[i];
