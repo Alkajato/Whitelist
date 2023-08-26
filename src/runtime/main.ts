@@ -15,12 +15,26 @@ export class Runtime {
         return `${path.dirname(path.dirname(__filename))}`;
     }
 
-    private static throwIfNoPassword() {
-        if (
-            fs.readFileSync(path.join(Runtime.omegga.configPath, "../Config/LinuxServer/ServerSettings.ini"), "utf-8").match(/ServerPassword=.+/) ===
-            null
-        ) {
-            throw "The server is not passworded. This is not an ethical use of the plugin.";
+    public static enabled: boolean;
+
+    // Enable or disable whitelist based off if passworded or not.
+    private static enableDisableCheck() {
+        const unpassworded = fs.readFileSync(path.join(Runtime.omegga.configPath, "../Config/LinuxServer/ServerSettings.ini"), "utf-8").match(/ServerPassword=.+/) ===
+            null;
+
+        if (unpassworded) {
+            this.enabled = false;
+
+            const host = this.omegga.getPlayers().find(player => this.omegga.findPlayerByName(player.name).isHost())
+            const message = "Unethical use of whitelist, enforce a password to use whitelist."
+
+            // Leave annoying console.log spam with or without host present if server returned disabled-whitelist status.
+            console.log(message);
+            if (host) {
+                this.omegga.whisper(host.name, message);
+            }
+        } else {
+            this.enabled = true;
         }
     }
 
@@ -29,8 +43,8 @@ export class Runtime {
         this.config = config;
         this.store = store;
 
-        this.throwIfNoPassword();
-        setInterval(this.throwIfNoPassword, 60000);
+        this.enableDisableCheck();
+        setInterval(this.enableDisableCheck, 60000);
 
         WhitelistManager.createWhitelistJson();
 
@@ -54,6 +68,9 @@ export class Runtime {
         });
 
         Runtime.omegga.on("join", async (player: { name: string; id: string; state: string; controller: string }) => {
+            if (!this.enabled)
+                return;
+
             const authorized = await WhitelistManager.validateIncomingUser(player.name, player.id);
             if (!authorized) {
                 // kick the player, lol!
