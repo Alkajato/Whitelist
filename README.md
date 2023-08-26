@@ -22,8 +22,6 @@ remove it entirely if it is unnecessary.
 
 `omegga install gh:Alkajato/whitelist`
 
-_TODO: more steps...?_
-
 ## Usage
 
 _TODO: include some usage information_
