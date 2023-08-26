@@ -19,24 +19,34 @@ export class Runtime {
         this.config = config;
         this.store = store;
 
-        new Command("whitelist_add", TrustLevel.Host, (speaker: string, desired_username: string) => {
-            WhitelistManager.addUser(desired_username);
-            this.omegga.whisper(speaker, `User ''${desired_username}'' has been added to the whitelist!`);
+        //TODO: read server settings to detect if there's a password, if there isn't a password, disable the plugin
+
+        new Command("whitelist_add", TrustLevel.Host, (speaker: string, ...desired_username_or_uuid: string[]) => {
+            if (desired_username_or_uuid[0].length === 36) {
+                WhitelistManager.addUser(undefined, desired_username_or_uuid[0]);
+            } else {
+                WhitelistManager.addUser(desired_username_or_uuid.join().replace(",", " "), undefined);
+            }
+
+            this.omegga.whisper(speaker, `User ''${desired_username_or_uuid.join().replace(",", " ")}'' has been added to the whitelist!`);
         });
 
-        new Command("whitelist_remove", TrustLevel.Host, (speaker: string, desired_username: string) => {
-            WhitelistManager.removeUser(desired_username);
-            this.omegga.whisper(speaker, `User ''${desired_username}'' has been removed to the whitelist!`);
+        new Command("whitelist_remove", TrustLevel.Host, (speaker: string, ...desired_username_or_uuid: string[]) => {
+            if (desired_username_or_uuid[0].length === 36) {
+                WhitelistManager.removeUser(undefined, desired_username_or_uuid[0]);
+            } else {
+                WhitelistManager.removeUser(desired_username_or_uuid.join().replace(",", " "), undefined);
+            }
+            this.omegga.whisper(speaker, `User ''${desired_username_or_uuid.join().replace(",", " ")}'' has been removed to the whitelist!`);
         });
 
         WhitelistManager.createWhitelistJson();
 
         Runtime.omegga.on("join", async (player: { name: string; id: string; state: string; controller: string }) => {
             const authorized = await WhitelistManager.validateIncomingUser(player.name, player.id);
-            this.omegga.broadcast(`Is ${player.name} allowed? ${authorized}.`);
             if (!authorized) {
                 // kick the player, lol!
-                //this.omegga.writeln(`Chat.Command /kick "${player.name}" "Whitelist enforced, you are not on the whitelist."`);
+                this.omegga.writeln(`Chat.Command /kick "${player.name}" "Whitelist enforced, you are not on the whitelist."`);
             }
         });
 
