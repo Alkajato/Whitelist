@@ -7,7 +7,9 @@ type WhitelistJSON = {
 };
 
 export default class WhitelistManager {
-    private static whitelistPath = path.join(Runtime.pluginPath, "whitelist.json");
+    private static getWhitelistPath() {
+        return path.join(Runtime.getPluginPath(), "whitelist.json");
+    }
 
     public static addUser(username?: string, uuid?: string) {
         let whitelist = this.readWhitelistFile();
@@ -98,16 +100,16 @@ export default class WhitelistManager {
     }
 
     public static createWhitelistJson() {
-        if (!fs.existsSync(this.whitelistPath)) {
-            fs.writeFileSync(this.whitelistPath, "");
+        if (!fs.existsSync(this.getWhitelistPath())) {
+            fs.writeFileSync(this.getWhitelistPath(), "");
         }
     }
 
     private static readWhitelistFile(): WhitelistJSON {
-        return JSON.parse(fs.readFileSync(this.whitelistPath, "utf-8"));
+        return JSON.parse(fs.readFileSync(this.getWhitelistPath(), "utf-8"));
     }
 
     private static writeWhitelistFile(whitelist: WhitelistJSON): void {
-        return fs.writeFileSync(this.whitelistPath, JSON.stringify(whitelist), { encoding: "utf-8" });
+        return fs.writeFileSync(this.getWhitelistPath(), JSON.stringify(whitelist), { encoding: "utf-8" });
     }
 }

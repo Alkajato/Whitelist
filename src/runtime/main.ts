@@ -9,7 +9,10 @@ export class Runtime {
     public static omegga: OmeggaLike;
     public static config: PC<Config>;
     public static store: PS<Storage>;
-    public static pluginPath: string = `${path.dirname(path.dirname(__filename))}`;
+
+    public static getPluginPath() {
+        return `${path.dirname(path.dirname(__filename))}`;
+    }
 
     public static async main(omegga: OmeggaLike, config: PC<Config>, store: PS<Storage>): Promise<{ registeredCommands: string[] }> {
         this.omegga = omegga;
