@@ -1,7 +1,7 @@
 import OmeggaPlugin, { OL, PS, PC } from "omegga";
 import { Runtime } from "src/runtime/main";
 
-export type Config = { "Restricted Role": string; "Trusted Role": string; "Developer Role": string; "Map Time Length": number; "Edit Mode": boolean };
+export type Config = {};
 export type Storage = {};
 
 export default class Plugin implements OmeggaPlugin<Config, Storage> {

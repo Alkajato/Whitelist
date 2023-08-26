@@ -20,9 +20,7 @@ remove it entirely if it is unnecessary.
 
 ## Install
 
-`omegga install gh:Syringe/whitelist`
-
-_TODO: more steps...?_
+`omegga install gh:Alkajato/whitelist`
 
 ## Usage
 

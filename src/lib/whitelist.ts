@@ -7,7 +7,9 @@ type WhitelistJSON = {
 };
 
 export default class WhitelistManager {
-    private static whitelistPath = path.join(Runtime.pluginPath, "whitelist.json");
+    private static getWhitelistPath() {
+        return path.join(Runtime.getPluginPath(), "whitelist.json");
+    }
 
     public static addUser(username?: string, uuid?: string) {
         let whitelist = this.readWhitelistFile();
@@ -65,14 +67,20 @@ export default class WhitelistManager {
         this.writeWhitelistFile(whitelist);
     }
 
-    public static validateIncomingUser(username: string, uuid: string): boolean {
+    public static async validateIncomingUser(username: string, uuid: string): Promise<boolean> {
         let authorized = false;
 
         let whitelist = this.readWhitelistFile();
+
+        const isHost = await new Promise((res) => {
+            setImmediate(() => {
+                res(Runtime.omegga.getPlayer(username).isHost());
+            });
+        });
+        if (isHost) return true;
+
         for (let i = 0; i < whitelist.players.length; i++) {
             const playerInfo = whitelist.players[i];
-
-            if (Runtime.omegga.getPlayer(username).isHost()) authorized = true;
 
             // exclusion cases
             if (playerInfo.username === username && playerInfo.uuid !== uuid && playerInfo.uuid != undefined) break;
@@ -98,16 +106,16 @@ export default class WhitelistManager {
     }
 
     public static createWhitelistJson() {
-        if (!fs.existsSync(this.whitelistPath)) {
-            fs.writeFileSync(this.whitelistPath, "");
+        if (!fs.existsSync(this.getWhitelistPath())) {
+            fs.writeFileSync(this.getWhitelistPath(), `{"players":[]}`);
         }
     }
 
     private static readWhitelistFile(): WhitelistJSON {
-        return JSON.parse(fs.readFileSync(this.whitelistPath, "utf-8"));
+        return JSON.parse(fs.readFileSync(this.getWhitelistPath(), "utf-8"));
     }
 
     private static writeWhitelistFile(whitelist: WhitelistJSON): void {
-        return fs.writeFileSync(this.whitelistPath, JSON.stringify(whitelist), { encoding: "utf-8" });
+        return fs.writeFileSync(this.getWhitelistPath(), JSON.stringify(whitelist), { encoding: "utf-8" });
     }
 }
