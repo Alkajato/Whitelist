@@ -43,8 +43,8 @@ export class Runtime {
         this.config = config;
         this.store = store;
 
-        this.enableDisableCheck();
-        setInterval(this.enableDisableCheck, 60000);
+        Runtime.enableDisableCheck();
+        setInterval(() => Runtime.enableDisableCheck, 60000);
 
         WhitelistManager.createWhitelistJson();
 
