@@ -48,7 +48,7 @@ export class Runtime {
 
         WhitelistManager.createWhitelistJson();
 
-        new Command("whitelist_add", TrustLevel.Host, (speaker: string, ...desired_username_or_uuid: string[]) => {
+        new Command("whitelist", TrustLevel.Host, (speaker: string, ...desired_username_or_uuid: string[]) => {
             if (desired_username_or_uuid[0].length === 36) {
                 WhitelistManager.addUser(undefined, desired_username_or_uuid[0]);
             } else {
@@ -58,7 +58,7 @@ export class Runtime {
             this.omegga.whisper(speaker, `User ''${desired_username_or_uuid.join().replace(",", " ")}'' has been added to the whitelist!`);
         });
 
-        new Command("whitelist_remove", TrustLevel.Host, (speaker: string, ...desired_username_or_uuid: string[]) => {
+        new Command("unwhitelist", TrustLevel.Host, (speaker: string, ...desired_username_or_uuid: string[]) => {
             if (desired_username_or_uuid[0].length === 36) {
                 WhitelistManager.removeUser(undefined, desired_username_or_uuid[0]);
             } else {

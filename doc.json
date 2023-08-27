@@ -5,9 +5,9 @@
     "config": {},
     "commands": [
         {
-            "name": "/whitelist_add",
+            "name": "/whitelist",
             "description": "add a user from the whitelist",
-            "example": "/whitelist_add Syringe, /whitelist_add c370e89e-53e5-43de-a760-b3f95be5c6a6",
+            "example": "/whitelist Syringe, /whitelist c370e89e-53e5-43de-a760-b3f95be5c6a6",
             "args": [
                 {
                     "name": "username/uuid",
@@ -17,9 +17,9 @@
             ]
         },
         {
-            "name": "/whitelist_remove",
+            "name": "/unwhitelist",
             "description": "removes a user from the whitelist",
-            "example": "/whitelist_remove Syringe /whitelist_remove c370e89e-53e5-43de-a760-b3f95be5c6a6",
+            "example": "/unwhitelist Syringe /unwhitelist c370e89e-53e5-43de-a760-b3f95be5c6a6",
             "args": [
                 {
                     "name": "username/uuid",

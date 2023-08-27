@@ -11,5 +11,5 @@ A typed safe plugin for [omegga](https://github.com/brickadia-community/omegga).
 
 ## Commands
 
--   /Whitelist_add (username or uuid)
--   /Whitelist_remove (username or uuid)
+-   /whitelist (username or uuid)
+-   /unwhitelist (username or uuid)
