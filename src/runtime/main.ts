@@ -62,7 +62,10 @@ export class Runtime {
             if (desired_username_or_uuid[0].length === 36) {
                 WhitelistManager.removeUser(undefined, desired_username_or_uuid[0]);
             } else {
-                WhitelistManager.removeUser(desired_username_or_uuid.join().replace(",", " "), undefined);
+                const userName = desired_username_or_uuid.join().replace(",", " ")
+
+                WhitelistManager.removeUser(userName, undefined)
+                this.omegga.writeln(`Chat.Command /kick "${userName}" "Whitelist enforced, you are not on the whitelist."`);
             }
             this.omegga.whisper(speaker, `User ''${desired_username_or_uuid.join().replace(",", " ")}'' has been removed to the whitelist!`);
         });
