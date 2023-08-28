@@ -16,13 +16,13 @@ export class Runtime {
     }
 
     // Remove all active players on server who are unwhitelisted.
-    private static kickMessage = "Whitelist enforced, you are not on the whitelist."
+    private static kickMessage = `Whitelist enforced, you are not on the whitelist.`
     private static async kickUnwhitelisted() {
         const players = Runtime.omegga.getPlayers();
         for (const player of players) {
-            const kick = await WhitelistManager.validateIncomingUser(player.name, player.id) == false
+            const kick = await (WhitelistManager.validateIncomingUser(player.name, player.id)) == false
             if (kick)
-                Runtime.omegga.writeln(`Chat.Command /kick "${player.name}" ${Runtime.kickMessage}`);
+                Runtime.omegga.writeln(`Chat.Command /kick "${player.name}" "${Runtime.kickMessage}"`);
         }
     }
 
@@ -51,8 +51,10 @@ export class Runtime {
         this.store = store;
 
         setInterval(() => {
-            if (Runtime.enableDisableCheck())
+            if (Runtime.enableDisableCheck()) {
+                Runtime.omegga.broadcast("Ran check")
                 Runtime.kickUnwhitelisted()
+            }
         }, 60000);
 
         WhitelistManager.createWhitelistJson();
@@ -75,7 +77,7 @@ export class Runtime {
 
                 WhitelistManager.removeUser(userName, undefined)
                 if (Runtime.enableDisableCheck())
-                    this.omegga.writeln(`Chat.Command /kick "${userName}" ${Runtime.kickMessage}`);
+                    this.omegga.writeln(`Chat.Command /kick "${userName}" "${Runtime.kickMessage}"`);
             }
             this.omegga.whisper(speaker, `User ''${desired_username_or_uuid.join().replace(",", " ")}'' has been removed to the whitelist!`);
         });
@@ -85,7 +87,7 @@ export class Runtime {
                 const authorized = await WhitelistManager.validateIncomingUser(player.name, player.id);
                 if (!authorized) {
                     // kick the player, lol!
-                    this.omegga.writeln(`Chat.Command /kick "${player.name}" ${Runtime.kickMessage}`);
+                    this.omegga.writeln(`Chat.Command /kick "${player.name}" "${Runtime.kickMessage}"`);
                 }
             }
         });
