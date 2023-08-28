@@ -52,7 +52,6 @@ export class Runtime {
 
         setInterval(() => {
             if (Runtime.enableDisableCheck()) {
-                Runtime.omegga.broadcast("Ran check")
                 Runtime.kickUnwhitelisted()
             }
         }, 60000);
