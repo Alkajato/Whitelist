@@ -15,28 +15,35 @@ export class Runtime {
         return `${path.dirname(path.dirname(__filename))}`;
     }
 
-    public static enabled: boolean;
+    // Remove all active players on server who are unwhitelisted.
+    private static kickMessage = `Whitelist enforced, you are not on the whitelist.`
+    private static async kickUnwhitelisted() {
+        const players = Runtime.omegga.getPlayers();
+        for (const player of players) {
+            const kick = await (WhitelistManager.validateIncomingUser(player.name, player.id)) == false
+            if (kick)
+                Runtime.omegga.writeln(`Chat.Command /kick "${player.name}" "${Runtime.kickMessage}"`);
+        }
+    }
 
-    // Enable or disable whitelist based off if passworded or not.
+    // Returns status of if whitelist kicking is enabled.
     private static enableDisableCheck() {
         const unpassworded =
             fs.readFileSync(path.join(Runtime.omegga.configPath, "../Config/LinuxServer/ServerSettings.ini"), "utf-8").match(/ServerPassword=.+/) ===
             null;
 
         if (unpassworded) {
-            Runtime.enabled = false;
-
-            const host = this.omegga.getPlayers().find((player) => this.omegga.findPlayerByName(player.name).isHost());
-            const message = "Unethical use of whitelist, enforce a password to use whitelist.";
+            const host = this.omegga.getPlayers().find(player => this.omegga.findPlayerByName(player.name).isHost())
+            const message = "Unethical use of whitelist, enforce a password to use whitelist."
 
             // Leave annoying console.log spam with or without host present if server returned disabled-whitelist status.
             console.log(message);
             if (host) {
                 this.omegga.whisper(host.name, message);
             }
-        } else {
-            Runtime.enabled = true;
         }
+
+        return !unpassworded;
     }
 
     public static async main(omegga: OmeggaLike, config: PC<Config>, store: PS<Storage>): Promise<{ registeredCommands: string[] }> {
@@ -44,8 +51,11 @@ export class Runtime {
         this.config = config;
         this.store = store;
 
-        Runtime.enableDisableCheck();
-        setInterval(() => Runtime.enableDisableCheck(), 60000);
+        setInterval(() => {
+            if (Runtime.enableDisableCheck()) {
+                Runtime.kickUnwhitelisted()
+            }
+        }, 60000);
 
         WhitelistManager.createWhitelistJson();
 
@@ -65,21 +75,20 @@ export class Runtime {
             } else {
                 const userName = desired_username_or_uuid.join(" ");
 
-                WhitelistManager.removeUser(userName, undefined);
-
-                Runtime.enableDisableCheck();
-                if (Runtime.enabled) this.omegga.writeln(`Chat.Command /kick "${userName}" "Whitelist enforced, you are not on the whitelist."`);
+                WhitelistManager.removeUser(userName, undefined)
+                if (Runtime.enableDisableCheck())
+                    this.omegga.writeln(`Chat.Command /kick "${userName}" "${Runtime.kickMessage}"`);
             }
             this.omegga.whisper(speaker, `User ''${desired_username_or_uuid.join(" ")}'' has been removed to the whitelist!`);
         });
 
         Runtime.omegga.on("join", async (player: { name: string; id: string; state: string; controller: string }) => {
-            if (!Runtime.enabled) return;
-
-            const authorized = await WhitelistManager.validateIncomingUser(player.name, player.id);
-            if (!authorized) {
-                // kick the player, lol!
-                this.omegga.writeln(`Chat.Command /kick "${player.name}" "Whitelist enforced, you are not on the whitelist."`);
+            if (Runtime.enableDisableCheck()) {
+                const authorized = await WhitelistManager.validateIncomingUser(player.name, player.id);
+                if (!authorized) {
+                    // kick the player, lol!
+                    this.omegga.writeln(`Chat.Command /kick "${player.name}" "${Runtime.kickMessage}"`);
+                }
             }
         });
 
