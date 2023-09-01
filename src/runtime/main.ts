@@ -16,13 +16,12 @@ export class Runtime {
     }
 
     // Remove all active players on server who are unwhitelisted.
-    private static kickMessage = `Whitelist enforced, you are not on the whitelist.`
+    private static kickMessage = `Whitelist enforced, you are not on the whitelist.`;
     private static async kickUnwhitelisted() {
         const players = Runtime.omegga.getPlayers();
         for (const player of players) {
-            const kick = await (WhitelistManager.validateIncomingUser(player.name, player.id)) == false
-            if (kick)
-                Runtime.omegga.writeln(`Chat.Command /kick "${player.name}" "${Runtime.kickMessage}"`);
+            const kick = (await WhitelistManager.validateIncomingUser(player.name, player.id)) == false;
+            if (kick) Runtime.omegga.writeln(`Chat.Command /kick "${player.name}" "${Runtime.kickMessage}"`);
         }
     }
 
@@ -33,11 +32,11 @@ export class Runtime {
             null;
 
         if (unpassworded) {
-            const host = this.omegga.getPlayers().find(player => this.omegga.findPlayerByName(player.name).isHost())
-            const message = "Unethical use of whitelist, enforce a password to use whitelist."
+            const host = this.omegga.getPlayers().find((player) => this.omegga.findPlayerByName(player.name).isHost());
+            const message = "Unethical use of whitelist, enforce a password to use whitelist.";
 
-            // Leave annoying console.log spam with or without host present if server returned disabled-whitelist status.
-            console.log(message);
+            // Leave annoying console.info spam with or without host present if server returned disabled-whitelist status.
+            console.info(message);
             if (host) {
                 this.omegga.whisper(host.name, message);
             }
@@ -53,7 +52,7 @@ export class Runtime {
 
         setInterval(() => {
             if (Runtime.enableDisableCheck()) {
-                Runtime.kickUnwhitelisted()
+                Runtime.kickUnwhitelisted();
             }
         }, 60000);
 
@@ -75,9 +74,8 @@ export class Runtime {
             } else {
                 const userName = desired_username_or_uuid.join(" ");
 
-                WhitelistManager.removeUser(userName, undefined)
-                if (Runtime.enableDisableCheck())
-                    this.omegga.writeln(`Chat.Command /kick "${userName}" "${Runtime.kickMessage}"`);
+                WhitelistManager.removeUser(userName, undefined);
+                if (Runtime.enableDisableCheck()) this.omegga.writeln(`Chat.Command /kick "${userName}" "${Runtime.kickMessage}"`);
             }
             this.omegga.whisper(speaker, `User ''${desired_username_or_uuid.join(" ")}'' has been removed to the whitelist!`);
         });

@@ -15,19 +15,7 @@ export default class WhitelistManager {
     public static addUser(username?: string, uuid?: string) {
         let whitelist = this.readWhitelistFile();
 
-        if (username !== undefined) {
-            const player = Runtime.omegga.getPlayer(username);
-
-            if (player === undefined) {
-                whitelist.players = whitelist.players.filter((v) => v.username !== username);
-                whitelist.players.push({ username: username, uuid: null });
-            } else {
-                whitelist.players = whitelist.players.filter((v) => v.username !== player.name && v.uuid !== player.id);
-                whitelist.players.push({ username: player.name, uuid: player.id });
-            }
-        }
-
-        if (uuid !== undefined) {
+        if (username === undefined) {
             const player = Runtime.omegga.getPlayer(username);
 
             if (player === undefined) {
@@ -37,25 +25,33 @@ export default class WhitelistManager {
                 whitelist.players = whitelist.players.filter((v) => v.username !== player.name && v.uuid !== player.id);
                 whitelist.players.push({ username: player.name, uuid: player.id });
             }
+            this.writeWhitelistFile(whitelist);
+            return;
         }
 
+        if (uuid === undefined) {
+            const player = Runtime.omegga.getPlayer(username);
+
+            if (player === undefined) {
+                whitelist.players = whitelist.players.filter((v) => v.username !== username);
+                whitelist.players.push({ username: username, uuid: null });
+            } else {
+                whitelist.players = whitelist.players.filter((v) => v.username !== player.name && v.uuid !== player.id);
+                whitelist.players.push({ username: player.name, uuid: player.id });
+            }
+            this.writeWhitelistFile(whitelist);
+            return;
+        }
+
+        whitelist.players = whitelist.players.filter((v) => v.username !== username && v.uuid !== uuid);
+        whitelist.players.push({ username: username, uuid: uuid });
         this.writeWhitelistFile(whitelist);
     }
 
     public static removeUser(username?: string, uuid?: string) {
         let whitelist = this.readWhitelistFile();
 
-        if (username !== undefined) {
-            const player = Runtime.omegga.getPlayer(username);
-
-            if (player === undefined) {
-                whitelist.players = whitelist.players.filter((v) => v.username !== username);
-            } else {
-                whitelist.players = whitelist.players.filter((v) => v.username !== player.name && v.uuid !== player.id);
-            }
-        }
-
-        if (uuid !== undefined) {
+        if (username === undefined) {
             const player = Runtime.omegga.getPlayer(username);
 
             if (player === undefined) {
@@ -63,8 +59,23 @@ export default class WhitelistManager {
             } else {
                 whitelist.players = whitelist.players.filter((v) => v.username !== player.name && v.uuid !== player.id);
             }
+            this.writeWhitelistFile(whitelist);
+            return;
         }
 
+        if (uuid === undefined) {
+            const player = Runtime.omegga.getPlayer(username);
+
+            if (player === undefined) {
+                whitelist.players = whitelist.players.filter((v) => v.username !== username);
+            } else {
+                whitelist.players = whitelist.players.filter((v) => v.username !== player.name && v.uuid !== player.id);
+            }
+            this.writeWhitelistFile(whitelist);
+            return;
+        }
+
+        whitelist.players = whitelist.players.filter((v) => v.username !== username && v.uuid !== uuid);
         this.writeWhitelistFile(whitelist);
     }
 
@@ -95,19 +106,25 @@ export default class WhitelistManager {
             if (playerInfo.username === username && playerInfo.uuid !== uuid && playerInfo.uuid != undefined) break;
 
             // inclusion cases
-            if (playerInfo.username === username && playerInfo.uuid === uuid) authorized = true;
+            if (playerInfo.username === username && playerInfo.uuid === uuid) {
+                authorized = true;
+                break;
+            }
             // inclusion cases with updates
             if (playerInfo.username === username && playerInfo.uuid == undefined) {
                 authorized = true;
-                this.addUser(username);
+                this.addUser(username, uuid);
+                break;
             }
             if (playerInfo.username == undefined && playerInfo.uuid === uuid) {
                 authorized = true;
-                this.addUser(uuid);
+                this.addUser(username, uuid);
+                break;
             }
             if (playerInfo.username !== username && playerInfo.uuid === uuid) {
                 authorized = true;
-                this.addUser(uuid);
+                this.addUser(username, uuid);
+                break;
             }
         }
 

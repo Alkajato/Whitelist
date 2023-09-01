@@ -4,3 +4,4 @@ omegga.d.ts
 disabled.omegga
 package-lock.json
 whitelist.json
+tests/
