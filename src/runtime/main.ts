@@ -28,7 +28,8 @@ export class Runtime {
 
     // Returns status of if whitelist kicking is enabled.
     private static enableDisableCheck() {
-        const unpassworded = fs.readFileSync(path.join(Runtime.omegga.configPath, "../Config/LinuxServer/ServerSettings.ini"), "utf-8").match(/ServerPassword=.+/) ===
+        const unpassworded =
+            fs.readFileSync(path.join(Runtime.omegga.configPath, "../Config/LinuxServer/ServerSettings.ini"), "utf-8").match(/ServerPassword=.+/) ===
             null;
 
         if (unpassworded) {
@@ -62,23 +63,23 @@ export class Runtime {
             if (desired_username_or_uuid[0].length === 36) {
                 WhitelistManager.addUser(undefined, desired_username_or_uuid[0]);
             } else {
-                WhitelistManager.addUser(desired_username_or_uuid.join().replace(",", " "), undefined);
+                WhitelistManager.addUser(desired_username_or_uuid.join(" "), undefined);
             }
 
-            this.omegga.whisper(speaker, `User ''${desired_username_or_uuid.join().replace(",", " ")}'' has been added to the whitelist!`);
+            this.omegga.whisper(speaker, `User ''${desired_username_or_uuid.join(" ")}'' has been added to the whitelist!`);
         });
 
         new Command("unwhitelist", TrustLevel.Host, (speaker: string, ...desired_username_or_uuid: string[]) => {
             if (desired_username_or_uuid[0].length === 36) {
                 WhitelistManager.removeUser(undefined, desired_username_or_uuid[0]);
             } else {
-                const userName = desired_username_or_uuid.join().replace(",", " ")
+                const userName = desired_username_or_uuid.join(" ");
 
                 WhitelistManager.removeUser(userName, undefined)
                 if (Runtime.enableDisableCheck())
                     this.omegga.writeln(`Chat.Command /kick "${userName}" "${Runtime.kickMessage}"`);
             }
-            this.omegga.whisper(speaker, `User ''${desired_username_or_uuid.join().replace(",", " ")}'' has been removed to the whitelist!`);
+            this.omegga.whisper(speaker, `User ''${desired_username_or_uuid.join(" ")}'' has been removed to the whitelist!`);
         });
 
         Runtime.omegga.on("join", async (player: { name: string; id: string; state: string; controller: string }) => {
